@@ -453,9 +453,15 @@
   </section>
 
   <script>
+    const layeredSection = document.querySelector('.layered-section');
+    let layeredSectionHeight = layeredSection.offsetHeight;
+
+    function updateSectionHeight() {
+      layeredSectionHeight = layeredSection.offsetHeight;
+    }
+
     function handleScroll() {
       const scrollY = window.pageYOffset;
-      const layeredSectionHeight = window.innerHeight * 4; // 4 viewport heights for layered section
       const scrollProgress = Math.min(scrollY / layeredSectionHeight, 1);
       
       // Get elements
@@ -510,8 +516,10 @@
 
     // Event listeners
     window.addEventListener('scroll', handleScrollThrottled);
-    
+    window.addEventListener('resize', updateSectionHeight);
+
     // Initialize
+    updateSectionHeight();
     handleScroll();
   </script>
 </body>
