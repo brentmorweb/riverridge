@@ -248,7 +248,6 @@
       position: fixed;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);
       text-align: center;
       z-index: 10;
       color: white;
@@ -256,7 +255,7 @@
       width: 90%;
       transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
       opacity: 0;
-      transform: translate(-50%, -50%) translateY(30px);
+      transform: translate(-50%, -50%) translateY(100vh);
     }
 
     .text-content.show {
@@ -500,6 +499,7 @@
     <div class="scroll-dot"></div>
     <div class="scroll-dot"></div>
     <div class="scroll-dot"></div>
+    <div class="scroll-dot"></div>
   </div>
 
   <!-- Parallax Section -->
@@ -534,7 +534,7 @@
     // Enhanced scroll handling with fixed text positioning
     function handleScroll() {
       const scrollY = window.pageYOffset;
-      const maxScroll = window.innerHeight * 3; // 3 viewport heights of scrolling
+      const maxScroll = window.innerHeight * 4; // 4 viewport heights of scrolling for 5 phases
       
       // Get elements
       const header = document.getElementById('header');
@@ -545,7 +545,7 @@
       const scrollProgress = Math.min(scrollY / maxScroll, 1);
       
       // Update scroll indicators
-      const currentDot = Math.floor(scrollProgress * 4);
+      const currentDot = Math.floor(scrollProgress * 5);
       scrollDots.forEach((dot, index) => {
         dot.classList.toggle('active', index === currentDot);
       });
@@ -557,89 +557,84 @@
         header.classList.remove('solid');
       }
       
-      // Fixed parallax logic with proper text timing
-      if (scrollProgress <= 0.25) {
-        // First phase: Bring parallax1 background up from 50vh to 0
-        const progress = scrollProgress / 0.25;
+      // Fixed parallax logic with proper text timing for five phases
+      if (scrollProgress <= 0.2) {
+        // Phase 1: bring in first background
+        const progress = scrollProgress / 0.2;
         layers[0].style.transform = `translateY(${50 - (progress * 50)}vh)`;
         layers[0].style.opacity = '1';
-        
-        // Hide other layers
+
+        // Hide others
         layers[1].style.opacity = '0';
         layers[2].style.opacity = '0';
         layers[3].style.opacity = '0';
         layers[1].style.transform = 'translateY(100vh)';
         layers[2].style.transform = 'translateY(100vh)';
         layers[3].style.transform = 'translateY(100vh)';
-        
-        // Show text content once background is positioned (after 15% scroll)
-        if (progress > 0.6) {
-          textContent.classList.add('show');
-        } else {
-          textContent.classList.remove('show');
-        }
-        
-      } else if (scrollProgress <= 0.5) {
-        // Second phase: Keep text visible while first background is stable
-        const progress = (scrollProgress - 0.25) / 0.25;
-        
-        // Keep layer 1 in final position
+        textContent.classList.remove('show');
+
+      } else if (scrollProgress <= 0.4) {
+        // Phase 2: show hero text
+        const progress = (scrollProgress - 0.2) / 0.2;
+
         layers[0].style.transform = 'translateY(0)';
         layers[0].style.opacity = '1';
-        
-        // Keep text content visible
+
         textContent.classList.add('show');
-        
+
         // Keep other layers hidden
         layers[1].style.opacity = '0';
         layers[2].style.opacity = '0';
         layers[3].style.opacity = '0';
-        
-      } else if (scrollProgress <= 0.75) {
-        // Third phase: Layer 2 slides up, fade out text
-        const progress = (scrollProgress - 0.5) / 0.25;
+
+      } else if (scrollProgress <= 0.6) {
+        // Phase 3: slide in second background, hide hero
+        const progress = (scrollProgress - 0.4) / 0.2;
         const slideProgress = Math.sin(progress * Math.PI / 2);
-        
+
         layers[0].style.transform = 'translateY(0)';
         layers[0].style.opacity = '1';
         layers[1].style.transform = `translateY(${100 - (slideProgress * 100)}vh)`;
         layers[1].style.opacity = slideProgress;
-        
-        // Fade out text at beginning of this phase
-        if (progress > 0.2) {
-          textContent.classList.remove('show');
-        }
-        
-        // Keep other layers hidden
+
+        textContent.classList.remove('show');
+
         layers[2].style.opacity = '0';
         layers[3].style.opacity = '0';
         layers[2].style.transform = 'translateY(100vh)';
         layers[3].style.transform = 'translateY(100vh)';
-        
-      } else {
-        // Fourth phase: Layer 3 slides up over layer 2
-        const progress = (scrollProgress - 0.75) / 0.25;
+
+      } else if (scrollProgress <= 0.8) {
+        // Phase 4: slide in third background
+        const progress = (scrollProgress - 0.6) / 0.2;
         const slideProgress = Math.sin(progress * Math.PI / 2);
-        
+
         layers[0].style.transform = 'translateY(0)';
         layers[0].style.opacity = '1';
         layers[1].style.transform = 'translateY(0)';
         layers[1].style.opacity = '1';
         layers[2].style.transform = `translateY(${100 - (slideProgress * 100)}vh)`;
         layers[2].style.opacity = slideProgress;
-        
-        // Keep text hidden
-        textContent.classList.remove('show');
-        
-        // Keep layer 4 hidden
+
         layers[3].style.opacity = '0';
         layers[3].style.transform = 'translateY(100vh)';
-      }
-      
-      // Show final layer when near the end
-      if (scrollProgress > 0.9) {
-        layers[3].style.transform = 'translateY(0)';
-        layers[3].style.opacity = '1';
+
+      } else {
+        // Phase 5: slide in fourth background
+        const progress = (scrollProgress - 0.8) / 0.2;
+        const slideProgress = Math.sin(progress * Math.PI / 2);
+
+        layers[0].style.transform = 'translateY(0)';
+        layers[1].style.transform = 'translateY(0)';
+        layers[2].style.transform = 'translateY(0)';
+        layers[0].style.opacity = '1';
+        layers[1].style.opacity = '1';
+        layers[2].style.opacity = '1';
+
+        layers[3].style.transform = `translateY(${100 - (slideProgress * 100)}vh)`;
+        layers[3].style.opacity = slideProgress;
+
+        textContent.classList.remove('show');
       }
     }
 
@@ -662,7 +657,7 @@
     const scrollDots = document.querySelectorAll('.scroll-dot');
     scrollDots.forEach((dot, index) => {
       dot.addEventListener('click', () => {
-        const targetScroll = (window.innerHeight * 0.75) * index;
+        const targetScroll = (window.innerHeight * 0.8) * index;
         window.scrollTo({
           top: targetScroll,
           behavior: 'smooth'
